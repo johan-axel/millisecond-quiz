@@ -2,16 +2,24 @@
 <html>
 <head>
     <title>Embedded YouTube Video with Start and End Time</title>
+    <style>
+    #player {
+      display: none;
+    }
+  </style>
 </head>
 <body>
 <div id="player"></div>
-<input type="text" id="durationInput" placeholder="Enter duration in milliseconds">
-<button onclick="seekVideo()">Submit</button>
+<button onclick="seekAndPlayVideo(300)">300ms</button>
+<button onclick="seekAndPlayVideo(600)">600ms</button>
+<button onclick="seekAndPlayVideo(1000)">1s</button>
+<button onclick="seekAndPlayVideo(10000)">10s</button>
 
 <script>
     // 1. Load the YouTube Iframe API asynchronously
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
+    var endTime = 80;
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
@@ -19,13 +27,13 @@
     var player;
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
-        height: '315',
+        height: '50',
         width: '560',
         videoId: 'h_D3VFfhvs4',
         playerVars: {
-          start: 99,
-          end: 100,
-          autoplay: 1,
+          start: endTime-10,
+          end: endTime,
+          autoplay: 0,
         },
         events: {
           'onReady': onPlayerReady
@@ -33,17 +41,14 @@
       });
     }
 
-    // 3. Add seekVideo function to player
+    // 3. Start playback when the player is ready
     function onPlayerReady(event) {
-      console.log("ready player");
-      // Function to seek to the calculated position based on input duration
-      window.seekVideo = function() {
-        var durationInput = document.getElementById('durationInput');
-        var duration = parseInt(durationInput.value);
-        var end = 100;
-        var position = end - duration / 1000; // Convert duration to seconds
+      // Function to seek to the calculated position and play the video
+      window.seekAndPlayVideo = function(duration) {
+        var position = endTime - duration / 1000; // Convert duration to seconds
 
         event.target.seekTo(position, true);
+        event.target.playVideo();
       };
     }
   </script>
