@@ -21,8 +21,8 @@
         width: '560',
         videoId: 'h_D3VFfhvs4',
         playerVars: {
-          start: 10,
-          end: 11,
+          start: 99,
+          end: 100,
           autoplay: 1,
         },
         events: {
@@ -33,7 +33,10 @@
 
     // 3. Start playback when the player is ready
     function onPlayerReady(event) {
-      event.target.playVideo();
+      // Seek to the desired time after the video has loaded
+      setTimeout(function() {
+        event.target.seekTo(99.0, true);
+      }, 2000);
     }
   </script>
 
