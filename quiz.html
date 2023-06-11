@@ -1,57 +1,187 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Embedded YouTube Video with Start and End Time</title>
+    <title>Embedded YouTube Videos with Start and End Time</title>
     <style>
-    #player {
+    #player0 {
       display: none;
+    }
+    .video-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .video-row button {
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
-<div id="player"></div>
-<button onclick="seekAndPlayVideo(300)">300ms</button>
-<button onclick="seekAndPlayVideo(600)">600ms</button>
-<button onclick="seekAndPlayVideo(1000)">1s</button>
-<button onclick="seekAndPlayVideo(10000)">10s</button>
+<div id="videos"></div>
+<div id="players">
+    <!-- I know, this is butt ugly. TODO - replace with javascript to create div objects dynamically -->
+    <div id="player0"></div>
+    <div id="player1"></div>
+    <div id="player2"></div>
+    <div id="player3"></div>
+    <div id="player4"></div>
+    <div id="player5"></div>
+    <div id="player6"></div>
+    <div id="player7"></div>
+    <div id="player8"></div>
+    <div id="player9"></div>
+    <div id="player10"></div>
 
-<script>
+
+    <script>
+    // JSON structure containing video IDs and end times
+    var videosData = [
+      {
+        videoId: 'mZ6VezKMoRY',
+        endTime: 92,
+        caption: 'Song 1'
+      },
+      {
+        videoId: 'NR7ablt3etU',
+        endTime: 5,
+        caption: 'Song 2'
+      },
+      {
+        videoId: 'h_D3VFfhvs4',
+        endTime: 99,
+        caption: 'Song 3'
+      },
+      {
+        videoId: 'eJO5HU_7_1w',
+        endTime: 90,
+        caption: 'Song 4'
+      },
+      {
+        videoId: '9bZkp7q19f0',
+        endTime: 13,
+        caption: 'Song 5'
+      },
+      {
+        videoId: 'CD-E-LDc384',
+        endTime: 90,
+        caption: 'Song 6'
+      },
+      {
+        videoId: 'G7KNmW9a75Y',
+        endTime: 39,
+        caption: 'Song 7'
+      },
+      {
+        videoId: '_3ZC45Q82pg',
+        endTime: 39,
+        caption: 'Song 8'
+      },
+            {
+        videoId: 'fOk8Tm815lE',
+        endTime: 2,
+        caption: 'Song 9'
+      },
+      {
+        videoId: 'hTWKbfoikeg',
+        endTime: 50,
+        caption: 'Song 10'
+      },
+      // Add more videos as needed
+
+    ];
+
     // 1. Load the YouTube Iframe API asynchronously
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
-    var endTime = 80;
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
+    var players = [];
     // 2. Create the player when the YouTube Iframe API is ready
-    var player;
     function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
+    console.log("start");
+      generatePlayer(0);
+    }
+
+    function generatePlayer(i) {
+        var videoData = videosData[i];
+        var playerName = 'player'+i;
+        var videoRow = document.createElement('div');
+        var playersContainer = document.getElementById('players');
+        videoRow.className = 'video-row';
+        //videoRow.id = playerName;
+
+        var captionElement = document.createElement('span');
+        captionElement.textContent = videoData.caption;
+        videoRow.appendChild(captionElement);
+
+
+        var button1 = createButton('300ms', 300, videoData.endTime, i);
+        var button2 = createButton('600ms', 600, videoData.endTime, i);
+        var button3 = createButton('1s', 1000, videoData.endTime, i);
+        var button4 = createButton('10s', 10000, videoData.endTime, i);
+
+        videoRow.appendChild(button1);
+        videoRow.appendChild(button2);
+        videoRow.appendChild(button3);
+        videoRow.appendChild(button4);
+
+        var videosContainer = document.getElementById('videos');
+        videosContainer.appendChild(videoRow);
+
+
+        // Create a player for each video
+        console.log("player " + i);
+        console.log("video: " + videoData.videoId);
+        player = new YT.Player(playerName, {
         height: '50',
-        width: '560',
-        videoId: 'h_D3VFfhvs4',
+        width: '75',
+        videoId: videoData.videoId,
         playerVars: {
-          start: endTime-10,
-          end: endTime,
-          autoplay: 0,
+          start: videoData.endTime - 10,
+          end: videoData.endTime,
+          autoplay: 1,
         },
         events: {
           'onReady': onPlayerReady
         }
       });
+      playersContainer.appendChild(videoRow);
     }
 
-    // 3. Start playback when the player is ready
-    function onPlayerReady(event) {
-      // Function to seek to the calculated position and play the video
-      window.seekAndPlayVideo = function(duration) {
-        var position = endTime - duration / 1000; // Convert duration to seconds
-
-        event.target.seekTo(position, true);
-        event.target.playVideo();
-      };
+    // Function to seek to the calculated position and play the video
+    function seekAndPlayVideo(duration, endTime, index) {
+          var position = endTime - duration / 1000; // Convert duration to seconds
+          var currentPlayer = players[index];
+          console.log("seeking: " + position);
+          currentPlayer.seekTo(position, true);
+          //Give the player some time to seek before playing
+          await new Promise(r => setTimeout(r, 1000));
+          currentPlayer.playVideo();
+          // This timeout might be needed - sometimes Youtube plays the entire video although endtime is set.
+          /*setTimeout(function() {
+            currentPlayer.pauseVideo();
+          }, duration+1);*/
     }
+
+    // Function to create a button for seeking and playing the video
+    function createButton(label, duration, endTime, index) {
+      var button = document.createElement('button');
+      button.textContent = label;
+      button.addEventListener('click', function() {
+        seekAndPlayVideo(duration, endTime, index);
+      });
+      return button;
+    }
+      function onPlayerReady(event) {
+          players.push(event.target);
+          console.log("player ready" + players.length);
+          if (players.length < videosData.length) {
+            generatePlayer(players.length);
+          }
+      }
+
+
   </script>
-
+</div>
 </body>
 </html>
