@@ -1,17 +1,41 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
-    <title>Embedded YouTube Video</title>
-
+    <title>Embedded YouTube Video with Start and End Time</title>
 </head>
-
 <body>
+<div id="player"></div>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/h_D3VFfhvs4?start=100&end=101" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<script>
+    // 1. Load the YouTube Iframe API asynchronously
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // 2. Create the player when the YouTube Iframe API is ready
+    var player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '315',
+        width: '560',
+        videoId: 'h_D3VFfhvs4',
+        playerVars: {
+          start: 10,
+          end: 11,
+          autoplay: 1,
+        },
+        events: {
+          'onReady': onPlayerReady
+        }
+      });
+    }
+
+    // 3. Start playback when the player is ready
+    function onPlayerReady(event) {
+      event.target.playVideo();
+    }
+  </script>
 
 </body>
-
 </html>
