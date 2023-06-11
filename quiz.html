@@ -5,6 +5,8 @@
 </head>
 <body>
 <div id="player"></div>
+<input type="text" id="durationInput" placeholder="Enter duration in milliseconds">
+<button onclick="seekVideo()">Submit</button>
 
 <script>
     // 1. Load the YouTube Iframe API asynchronously
@@ -31,12 +33,18 @@
       });
     }
 
-    // 3. Start playback when the player is ready
+    // 3. Add seekVideo function to player
     function onPlayerReady(event) {
-      // Seek to the desired time after the video has loaded
-      setTimeout(function() {
-        event.target.seekTo(99.0, true);
-      }, 2000);
+      console.log("ready player");
+      // Function to seek to the calculated position based on input duration
+      window.seekVideo = function() {
+        var durationInput = document.getElementById('durationInput');
+        var duration = parseInt(durationInput.value);
+        var end = 100;
+        var position = end - duration / 1000; // Convert duration to seconds
+
+        event.target.seekTo(position, true);
+      };
     }
   </script>
 
