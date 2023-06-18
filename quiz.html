@@ -3,9 +3,6 @@
 <head>
     <title>Embedded YouTube Videos with Start and End Time</title>
     <style>
-    #player0 {
-      display: none;
-    }
     .video-row {
       display: flex;
       align-items: center;
@@ -19,7 +16,7 @@
 <body>
 <div id="videos"></div>
 <div id="players">
-    <!-- I know, this is butt ugly. TODO - replace with javascript to create div objects dynamically -->
+    <!-- I know, this is butt ugly. TODO - replace with javascript to create div objects dynamically
     <div id="player0"></div>
     <div id="player1"></div>
     <div id="player2"></div>
@@ -31,7 +28,7 @@
     <div id="player8"></div>
     <div id="player9"></div>
     <div id="player10"></div>
-
+-->
 
     <script>
     // JSON structure containing video IDs and end times
@@ -89,7 +86,7 @@
       // Add more videos as needed
 
     ];
-
+       console.log("starting");
     // 1. Load the YouTube Iframe API asynchronously
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -98,7 +95,13 @@
     var players = [];
     // 2. Create the player when the YouTube Iframe API is ready
     function onYouTubeIframeAPIReady() {
-    console.log("start");
+      //Generate some divs to contain the iFrames
+      var playersContainer = document.getElementById('players');
+      for (var i = 0; i < videosData.length; i++) {
+            var playerContainer = document.createElement('div');
+            playerContainer.id = 'player' + i;
+            playersContainer.appendChild(playerContainer);
+      }
       generatePlayer(0);
     }
 
@@ -107,6 +110,8 @@
         var playerName = 'player'+i;
         var videoRow = document.createElement('div');
         var playersContainer = document.getElementById('players');
+
+
         videoRow.className = 'video-row';
         //videoRow.id = playerName;
 
@@ -155,7 +160,7 @@
           console.log("seeking: " + position);
           currentPlayer.seekTo(position, true);
           //Give the player some time to seek before playing
-          await new Promise(r => setTimeout(r, 1000));
+          //await new Promise(r => setTimeout(r, 1000));
           currentPlayer.playVideo();
           // This timeout might be needed - sometimes Youtube plays the entire video although endtime is set.
           /*setTimeout(function() {
