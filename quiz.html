@@ -72,7 +72,8 @@
       // Add more videos as needed
 
     ];
-       console.log("starting");
+      console.log("starting");
+       var arePlayersVisible = true;
     // 1. Load the YouTube Iframe API asynchronously
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -81,11 +82,13 @@
     var players = [];
     // 2. Create the player when the YouTube Iframe API is ready
     function onYouTubeIframeAPIReady() {
-      //Generate some divs to contain the iFrames
+      console.log("start");
       var playersContainer = document.getElementById('players');
       for (var i = 0; i < videosData.length; i++) {
             var playerContainer = document.createElement('div');
             playerContainer.id = 'player' + i;
+            playerContainer.classList.add('player-container');
+            playerContainer.style.display = 'none';
             playersContainer.appendChild(playerContainer);
       }
       generatePlayer(0);
@@ -170,6 +173,22 @@
             generatePlayer(players.length);
           }
       }
+// Function to toggle the visibility of the video players
+function togglePlayerVisibility() {
+  var playerContainers = document.getElementsByClassName('player-container');
+  for (var i = 0; i < playerContainers.length; i++) {
+    var playerContainer = playerContainers[i];
+    playerContainer.style.display = arePlayersVisible ? 'none' : 'block';
+  }
+
+  arePlayersVisible = !arePlayersVisible;
+}
+
+// Create a button to toggle the visibility of the players
+var toggleButton = document.createElement('button');
+toggleButton.textContent = arePlayersVisible ? 'none' : 'block
+toggleButton.addEventListener('click', togglePlayerVisibility);
+document.body.appendChild(toggleButton);
 
 
   </script>
